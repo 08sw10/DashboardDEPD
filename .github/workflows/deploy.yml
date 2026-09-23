@@ -1,0 +1,59 @@
+name: DEPD Dashboard CI/CD
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Unit Tests & Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Security Check - Verify No Secrets Committed
+        run: |
+          if git log -p -1 | grep -iE '("private_key": "-----BEGIN|Token [a-f0-9]{30,})'; then
+            echo "ERROR: Potential hardcoded credentials detected in commit!"
+            exit 1
+          fi
+
+      - name: Run Pytest Suite
+        run: |
+          pytest tests/ -v --junitxml=test-results.xml
+
+  docker-build:
+    name: Build & Verify Docker Image
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: depd-dashboard:latest

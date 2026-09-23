@@ -1,0 +1,93 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "district": "Karachi", "division": "Karachi", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[66.85, 24.75], [67.35, 24.75], [67.35, 25.15], [66.85, 25.15], [66.85, 24.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Hyderabad", "division": "Hyderabad", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.20, 25.20], [68.60, 25.20], [68.60, 25.60], [68.20, 25.60], [68.20, 25.20]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Sukkur", "division": "Sukkur", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.60, 27.50], [69.20, 27.50], [69.20, 28.00], [68.60, 28.00], [68.60, 27.50]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Larkana", "division": "Larkana", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[67.90, 27.30], [68.45, 27.30], [68.45, 27.80], [67.90, 27.80], [67.90, 27.30]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Mirpur Khas", "division": "Mirpur Khas", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.80, 25.30], [69.30, 25.30], [69.30, 25.80], [68.80, 25.80], [68.80, 25.30]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Shaheed Benazirabad", "division": "Shaheed Benazirabad", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.00, 26.00], [68.70, 26.00], [68.70, 26.60], [68.00, 26.60], [68.00, 26.00]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Thatta", "division": "Hyderabad", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[67.50, 24.30], [68.20, 24.30], [68.20, 24.90], [67.50, 24.90], [67.50, 24.30]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Badin", "division": "Hyderabad", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.50, 24.20], [69.20, 24.20], [69.20, 24.90], [68.50, 24.90], [68.50, 24.20]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Tharparkar", "division": "Mirpur Khas", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[69.30, 24.30], [70.50, 24.30], [70.50, 25.20], [69.30, 25.20], [69.30, 24.30]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Khairpur", "division": "Sukkur", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.50, 26.80], [69.50, 26.80], [69.50, 27.60], [68.50, 27.60], [68.50, 26.80]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "district": "Jacobabad", "division": "Larkana", "province": "Sindh" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.10, 28.00], [68.80, 28.00], [68.80, 28.50], [68.10, 28.50], [68.10, 28.00]]]
+      }
+    }
+  ]
+}
