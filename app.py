@@ -185,8 +185,15 @@ def main():
         if enable_sync:
             if not Config.is_sheets_configured():
                 st.warning(
-                    "Add GOOGLE_SHEET_ID and GOOGLE_SERVICE_ACCOUNT_JSON to "
-                    ".streamlit/secrets.toml to enable writing."
+                    "Sheets credentials are missing here. **On Streamlit Cloud:** "
+                    "open **⚙️ Manage app → Settings → Secrets** and paste the full "
+                    "content of `secrets/cloud_secrets_ready.toml` "
+                    "(regenerate locally with `python scripts/build_cloud_secrets.py`) — "
+                    "it must include `GOOGLE_SHEET_ID` and a non-empty "
+                    "`GOOGLE_SERVICE_ACCOUNT_JSON = '''…'''`. Then **restart the app**. "
+                    "**Locally:** `.streamlit/secrets.toml` + `secrets/service_account.json`. "
+                    "Sharing the Sheet with the service account's `client_email` as "
+                    "**Editor** is also required for writing."
                 )
             elif st.button("Sync live data now", use_container_width=True, key="depd_sheets_sync_now"):
                 with st.spinner("Writing live Kobo rows to Google Sheets..."):
