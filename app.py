@@ -216,21 +216,107 @@ def main():
     # Demo-mode diagnostic sidebar expander
     if not is_live:
         with st.sidebar.expander("⚠️ Demo Mode — why?", expanded=False):
+            st.markdown("**Credential check** (key names only — values never shown):")
+
+            required_keys = [
+                ("KOBO_ASSET_UID", "Kobo asset UID"),
+                ("KOBO_TOKEN", "Kobo API token"),
+                ("KOBO_EXPORT_SETTINGS_UID", "Kobo CSV export UID"),
+                ("GOOGLE_SHEET_ID", "Google Sheet ID"),
+                ("GOOGLE_SERVICE_ACCOUNT_JSON", "Service account JSON (or secrets/service_account.json)"),
+            ]
+
+            # Inspect st.secrets load status WITHOUT exposing any values.
+            # Only the exception class name is shown — messages can quote file
+            # contents (including secret lines), so they must never be rendered.
+            present_keys = set()
+            secrets_error_hint = None
+            try:
+                present_keys = set(st.secrets.keys())
+            except Exception as exc:  # Streamlit wraps BOTH cases in StreamlitSecretNotFoundError
+                # Empirically verified: a missing secrets file raises
+                # StreamlitSecretNotFoundError with "No secrets found. Valid
+                # paths ...", while a broken TOML file raises the SAME exception
+                # class with "Error parsing secrets file at <path>: ...".
+                # So the class name cannot distinguish them — classify by message
+                # content instead. Only curated hints are shown: exception text
+                # can contain file paths / parser locations, so it is never
+                # rendered as-is.
+                exc_msg = str(exc)
+                if (
+                    isinstance(exc, FileNotFoundError)
+                    or "No secrets found" in exc_msg
+                ):
+                    secrets_error_hint = (
+                        "No Streamlit secrets file was found. "
+                        "Locally: create `.streamlit/secrets.toml`. "
+                        "On Streamlit Community Cloud: paste it via "
+                        "**⚙️ Manage app → Settings → Secrets** (it is NOT in the repo — "
+                        "`.gitignore` excludes it on purpose)."
+                    )
+                else:
+                    secrets_error_hint = (
+                        "Secrets exist but failed to parse as TOML. "
+                        "Common causes: an unclosed quote, a real line-break inside "
+                        "a `\"...\"` string (use `'''...'''` for the multi-line "
+                        "service-account JSON), or a smart-quote copied from a "
+                        "chat/document."
+                    )
+
+            if secrets_error_hint:
+                st.error(secrets_error_hint)
+
+            sa_inline = False
+            for key, label in required_keys:
+                in_file = key in present_keys
+                value = None
+                if in_file:
+                    try:
+                        value = st.secrets.get(key)
+                    except Exception:
+                        value = None
+                env_value = os.getenv(key)
+                # Resolution mirrors src.config.get_secret(): st.secrets → env → default
+                resolved = value if (in_file and value not in (None, "")) else (
+                    env_value if (env_value and env_value.strip()) else None
+                )
+                if key == "GOOGLE_SERVICE_ACCOUNT_JSON":
+                    sa_inline = bool(value not in (None, ""))
+                if resolved:
+                    st.markdown(f"✅ `{key}` — {label}")
+                else:
+                    st.markdown(f"❌ `{key}` — {label} **missing**")
+
+            # Sheets fallback file (only relevant when the inline JSON key is empty)
+            sa_ok = bool(
+                sa_inline
+                or os.path.exists("secrets/service_account.json")
+                or os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+            )
+            if not sa_ok:
+                st.markdown(
+                    "❌ No Google service-account credentials: paste the JSON inline "
+                    "into `GOOGLE_SERVICE_ACCOUNT_JSON = '''{...}'''` "
+                    "(the `secrets/service_account.json` file is not deployed to the cloud)."
+                )
+
             st.markdown(
                 """
-                The dashboard is using **sample data** because credentials
-                were not detected.
-
                 **To enable live data:**
 
-                1. Confirm `.streamlit/secrets.toml` contains:
-                   - `KOBO_BASE_URL`, `KOBO_ASSET_UID`, `KOBO_TOKEN`
-                   - `GOOGLE_SHEET_ID`, `GOOGLE_SHEET_TAB`
-                2. Confirm `secrets/service_account.json` exists (the Google
-                   service-account JSON file).
-                3. Share the Google Sheet with the service account's
-                   `client_email` (Viewer access).
-                4. Restart Streamlit or click **Refresh Live Data**.
+                **On Streamlit Community Cloud** (the repo cannot contain secrets):
+
+                1. Open **⚙️ Manage app → Settings → Secrets**
+                2. Paste the full content of your local
+                   `.streamlit/secrets.toml` — with `GOOGLE_SERVICE_ACCOUNT_JSON`
+                   filled in as a `'''…'''` multi-line string (the file
+                   `secrets/service_account.json` does **not** exist in the cloud).
+                3. Click **Save** → **⚙️ Manage app → Restart app**.
+                4. Confirm the green **● Live Data** badge.
+
+                **Locally:** ensure `.streamlit/secrets.toml` and
+                `secrets/service_account.json` exist, share the Sheet with the
+                service account's `client_email`, then restart Streamlit.
 
                 See README → *Security & Credentials Policy* for details.
                 """
